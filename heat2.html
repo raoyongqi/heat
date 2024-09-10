@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="cleartype" content="on">
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Scatter Plot with AMap and ECharts</title>
+  <!-- 高德地图 API -->
+  <script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=03526e76418d9af743a39c09e6083a52&plugin=AMap.DistrictLayer,AMap.DistrictSearch"></script>
+  <!-- ECharts CDN -->
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <!-- echarts-extension-amap -->
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts-extension-amap@1.12.0/dist/echarts-extension-amap.min.js"></script>
+  <style type="text/css">
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    html, body, #echarts-amap {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div id="echarts-amap"></div>
+  <script type="text/javascript">
+    // 生成随机数据
+    const numPlots = 100;
+    const data = [];
+    for (let i = 0; i < numPlots; i++) {
+      const x = Math.random() * 100; // 随机 X 坐标
+      const y = Math.random() * 100; // 随机 Y 坐标
+      const value = Math.floor(Math.random() * 100); // 随机值 0-100
+      data.push([x, y, value]);
+    }
+
+    // 初始化 ECharts 实例
+    const chart = echarts.init(document.getElementById('echarts-amap'));
+
+    // ECharts 配置项
+    const option = {
+      amap: {
+        viewMode: '3D',
+        center: [102.278269, 35.391011],
+        zoom: 4,
+        resizeEnable: true,
+        mapStyle: 'amap://styles/dark',
+        renderOnMoving: true,
+        echartsLayerZIndex: 2000,
+        echartsLayerInteractive: true,
+        largeMode: false
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: (params) => `Value: ${params.value[2]}`
+      },
+      visualMap: {
+        min: 0,
+        max: 100,
+        calculable: true,
+        orient: 'horizontal',
+        left: 'center',
+        bottom: '15%',
+        inRange: {
+          color: ['#ffffff', '#ff0000'] // 从白到红的颜色渐变
+        }
+      },
+      series: [{
+        name: 'Scatter',
+        type: 'scatter',
+        coordinateSystem: 'amap',
+        symbolSize: 20, // 每个格子的大小
+        data: data,
+        label: {
+          show: true,
+          formatter: (params) => params.value[2], // 显示数值
+          position: 'top'
+        },
+        itemStyle: {
+          emphasis: {
+            shadowBlur: 10,
+            shadowColor: 'rgba(0, 0, 0, 0.5)',
+            shadowOffsetY: 5
+          }
+        }
+      }]
+    };
+
+    // 使用指定的配置项和数据显示图表
+    chart.setOption(option);
+
+    // // 获取 AMap 扩展组件实例
+    // const amapComponent = chart.getModel().getComponent('amap');
+    // const amap = amapComponent.getAMap();
+
+    // // 创建区域搜索并添加到地图
+    // const districtSearch = new AMap.DistrictSearch({
+    //   extensions: "all",
+    //   subdistrict: 0,
+    // });
+
+    // districtSearch.search("河北省", function (status, result) {
+    //   const outer = [
+    //     new AMap.LngLat(-360, 90, true),
+    //     new AMap.LngLat(-360, -90, true),
+    //     new AMap.LngLat(360, -90, true),
+    //     new AMap.LngLat(360, 90, true),
+    //   ];
+
+    //   const boundaries = result.districtList[0].boundaries;
+    //   const pathArray = [outer];
+
+    //   if (boundaries && Array.isArray(boundaries)) {
+    //     boundaries.forEach(boundary => {
+    //       if (Array.isArray(boundary)) {
+    //         const hole = boundary.map(coord => {
+    //           if (coord instanceof AMap.LngLat) {
+    //             return coord;
+    //           } else {
+    //             console.warn('无效的坐标格式:', coord);
+    //             return null;
+    //           }
+    //         }).filter(latlng => latlng !== null);
+
+    //         if (hole.length > 0) {
+    //           pathArray.push(hole);
+    //         }
+    //       } else {
+    //         console.warn('无效的边界:', boundary);
+    //       }
+    //     });
+    //   } else {
+    //     console.error('边界数据格式错误:', boundaries);
+    //   }
+
+    //   const polygon = new AMap.Polygon({
+    //     path: pathArray,
+    //     strokeColor: "#99ffff",
+    //     strokeWeight: 4,
+    //     strokeOpacity: 1,
+    //     fillColor: "#fff",
+    //     fillOpacity: 1,
+    //   });
+
+    //   amap.add(polygon);
+    // });
+  </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECharts Scatter Plot Example</title>
+  <!-- 引入 ECharts 库 -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <style>
+    #main {
+      width: 800px;
+      height: 600px;
+      margin: 50px auto;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align: center;">Scatter Plot of 100 Plots</h2>
+  <!-- 用于展示 ECharts 的 DOM 容器 -->
+  <div id="main"></div>
+
+  <script>
+    // 初始化随机数据
+    const data = [];
+    const numPlots = 100; // 100 个格子
+    const gridSpacing = 5; // 控制格子之间的距离
+
+    // 生成 100 个随机格子的位置和数值
+    for (let i = 0; i < numPlots; i++) {
+      const x = Math.random() * 100; // 随机 X 坐标
+      const y = Math.random() * 100; // 随机 Y 坐标
+      const value = Math.floor(Math.random() * 100); // 随机数值 0-100
+      data.push([x, y, value]);
+    }
+
+    // 基于准备好的 DOM，初始化 ECharts 实例
+    const chart = echarts.init(document.getElementById('main'));
+
+    // ECharts 配置项
+    const option = {
+      title: {
+        text: 'Scatter Plot of 100 Plots',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: (params) => `Value: ${params.value[2]}`
+      },
+      xAxis: {
+        type: 'value',
+        name: 'X Axis',
+        min: 0,
+        max: 100
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Y Axis',
+        min: 0,
+        max: 100
+      },
+      visualMap: {
+        min: 0,
+        max: 100, // 假设值的范围是 0 到 100
+        calculable: true,
+        orient: 'horizontal',
+        left: 'center',
+        bottom: '15%',
+        inRange: {
+          color: ['#ffffff', '#ff0000'] // 从白到红的颜色渐变
+        }
+      },
+      series: [{
+        name: 'Scatter',
+        type: 'scatter',
+        symbolSize: 20, // 每个格子的大小
+        data: data,
+        label: {
+          show: true,
+          formatter: (params) => params.value[2], // 在每个格子上显示数值
+          position: 'top'
+        },
+        itemStyle: {
+          emphasis: {
+            shadowBlur: 10,
+            shadowColor: 'rgba(0, 0, 0, 0.5)',
+            shadowOffsetY: 5
+          }
+        }
+      }]
+    };
+
+    // 使用指定的配置项和数据显示图表
+    chart.setOption(option);
+  </script>
+</body>
+</html>
